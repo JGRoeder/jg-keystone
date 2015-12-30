@@ -85,21 +85,40 @@ cloudinaryimages.prototype.addToSchema = function() {
 
 	// Generate cloudinary folder used to upload/select images
 	var folder = function(item) {//eslint-disable-line no-unused-vars
-		var folderValue = '';
+		var folderValue = null;
 
-		if (keystone.get('cloudinary folders')) {
-			if (field.options.folder) {
-				folderValue = field.options.folder;
+		if ( keystone.get('cloudinary folders')) {
+			if ( field.options.folder ) {
+				var folderList = [];
+				if ( field.options.prefixWithKey) { folderList.push(item.key)}
+				folderList.push(field.options.folder);
+				folderValue = folderList.join('/');
 			} else {
 				var folderList = keystone.get('cloudinary prefix') ? [keystone.get('cloudinary prefix')] : [];
 				folderList.push(field.list.path);
+				if ( field.options.prefixWithKey ) { folderList.push(item.key)}
 				folderList.push(field.path);
 				folderValue = folderList.join('/');
 			}
 		}
-
 		return folderValue;
 	};
+	// var folder = function(item) {//eslint-disable-line no-unused-vars
+	// 	var folderValue = '';
+	//
+	// 	if (keystone.get('cloudinary folders')) {
+	// 		if (field.options.folder) {
+	// 			folderValue = field.options.folder;
+	// 		} else {
+	// 			var folderList = keystone.get('cloudinary prefix') ? [keystone.get('cloudinary prefix')] : [];
+	// 			folderList.push(field.list.path);
+	// 			folderList.push(field.path);
+	// 			folderValue = folderList.join('/');
+	// 		}
+	// 	}
+	//
+	// 	return folderValue;
+	// };
 
 	// The .folder virtual returns the cloudinary folder used to upload/select images
 	schema.virtual(field.paths.folder).get(function() {
